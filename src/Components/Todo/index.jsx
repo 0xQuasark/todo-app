@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import useForm from '../../hooks/form';
+import { SettingsContext } from '../../context/Settings';
 
 import { v4 as uuid } from 'uuid';
 
 const Todo = () => {
 
-  const [defaultValues] = useState({
-    difficulty: 4,
-  });
+  const settings = React.useContext(SettingsContext);
+
+  const [defaultValues] = useState({ difficulty: 4 });
   const [list, setList] = useState([]);
   const [incomplete, setIncomplete] = useState([]);
   const { handleChange, handleSubmit } = useForm(addItem, defaultValues);
@@ -38,6 +39,9 @@ const Todo = () => {
   }
 
   useEffect(() => {
+
+    console.log('Settings are:', settings);
+
     let incompleteCount = list.filter(item => !item.complete).length;
     setIncomplete(incompleteCount);
     document.title = `To Do List: ${incomplete}`;
