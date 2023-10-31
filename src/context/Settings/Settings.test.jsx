@@ -6,7 +6,7 @@ import { render, screen } from '@testing-library/react'
 
 describe ('Settings context, ', () => {
 
-  test('Should give sort, hideCompleted and displayItems to children', () => {
+  test('Should give sort, hideCompleted and itemsPerPage to children', () => {
 
     render (
       <SettingsProvider>
@@ -15,7 +15,7 @@ describe ('Settings context, ', () => {
           {(context) => (
             <>
               <p>{context.sort}</p>
-              <p>{context.displayItems}</p>
+              <p>{context.itemsPerPage}</p>
               <p>{`${context.hideCompleted}`}</p>
             </>
           )}
