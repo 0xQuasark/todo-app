@@ -1,5 +1,5 @@
 import React from 'react';
-import { SettingsContext } from '../../context/Settings';
+import { SettingsContext } from '../../context/Settings/SettingsProvider';
 import useForm from '../../hooks/form';
 
 const Todo = ({ handleChange, handleSubmit }) => {
