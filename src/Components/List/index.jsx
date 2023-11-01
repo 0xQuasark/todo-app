@@ -3,6 +3,7 @@ import { Pagination } from '@mantine/core';
 import { SettingsContext } from '../../context/Settings/SettingsProvider';
 
 const List = ({ list, toggleComplete }) => {
+  console.log('list:', list)
   const settings = useContext(SettingsContext);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -15,7 +16,7 @@ const List = ({ list, toggleComplete }) => {
   const endIndex = startIndex + settings.itemsPerPage;
   // Slice the list to get the items to be rendered based on the start and end indices
   const itemsToRender = list.slice(startIndex, endIndex);
-  console.log('render items:', itemsToRender)
+  // console.log('render items:', itemsToRender)
 
   // Return the component
   return (
@@ -24,8 +25,10 @@ const List = ({ list, toggleComplete }) => {
         <div key={item.id}>
           <p>{item.id}</p>
           <p><small>Assigned to: {item.assignee}</small></p>
-          <p><small>Difficulty: {item.sort}</small></p>
-          <div onClick={() => toggleComplete(item.id)}>Complete: {item.complete.toString()}</div>
+          <p><small>Difficulty: {item.difficulty}</small></p>
+          <div onClick={() => toggleComplete(item.id)}>
+            Complete: {item.complete.toString()}
+          </div>
           <hr />
         </div>
       ))}
