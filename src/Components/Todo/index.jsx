@@ -25,7 +25,7 @@ const Todo = ({ handleChange, handleSubmit }) => {
 
         <label>
           <span>Difficulty</span>
-          <input onChange={handleChange} defaultValue={settings.difficulty} type="range" min={1} max={5} name="difficulty" />
+          <input onChange={handleChange} defaultValue={settings.sort} type="range" min={1} max={5} name="difficulty" />
         </label>
 
         <label>
