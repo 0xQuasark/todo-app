@@ -15,15 +15,16 @@ const List = ({ list, toggleComplete }) => {
   const endIndex = startIndex + settings.itemsPerPage;
   // Slice the list to get the items to be rendered based on the start and end indices
   const itemsToRender = list.slice(startIndex, endIndex);
+  console.log('render items:', itemsToRender)
 
   // Return the component
   return (
     <>
       {itemsToRender.map(item => (
         <div key={item.id}>
-          <p>{item.text}</p>
+          <p>{item.id}</p>
           <p><small>Assigned to: {item.assignee}</small></p>
-          <p><small>Difficulty: {item.difficulty}</small></p>
+          <p><small>Difficulty: {item.sort}</small></p>
           <div onClick={() => toggleComplete(item.id)}>Complete: {item.complete.toString()}</div>
           <hr />
         </div>
