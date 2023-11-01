@@ -12,17 +12,15 @@ function SettingsProvider(props) {
   // const [sortDifficulty, setSortDifficulty] = useState('default');
   const [sort, setSort] = useState('difficulty');   // copying Jacob's name during demo
 
-
-  // save our settings
-  const saveSettings = () => {
+  useEffect(() => {
+    // This function saves to localStorage when any of the variables change
     const settings = {
       itemsPerPage,
       hideCompleted,
       sort
     };
     localStorage.setItem('settings', JSON.stringify(settings));
-    // console.log('saved: ', settings)
-  }
+  }, [hideCompleted, itemsPerPage, sort]);
 
   // load the settings (if any)
   useEffect(() => {
@@ -37,9 +35,22 @@ function SettingsProvider(props) {
     // console.log('loaded: ', JSON.parse(savedSettings))
   }, []); // an empty array here makes it load only once on mount
 
-  saveSettings();
+  const toggleHideCompleted = () => setHideCompleted(!hideCompleted);
+
+  const changeDisplayItems = (num) => {
+    if (typeof(num) === 'number') {
+      setItemsPerPage(num);
+    } else {
+      console.log('Please give me a number');
+    }
+  }
+
+  const updateSort = (option) => {
+    // add logic one day
+  }
+
   return (
-    <SettingsContext.Provider value = {{ itemsPerPage, hideCompleted, sort}}>
+    <SettingsContext.Provider value = {{ itemsPerPage, hideCompleted, sort, toggleHideCompleted, changeDisplayItems}}>
       {props.children}
     </SettingsContext.Provider>
   )
