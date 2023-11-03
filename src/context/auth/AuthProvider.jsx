@@ -1,6 +1,7 @@
 'use strict';
 import React, { useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
+import axios from 'axios';
 
 const testUsers = {
   Administrator: {
@@ -23,8 +24,8 @@ const testUsers = {
     name: 'User',
     token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiVXNlciIsInJvbGUiOiJ1c2VyIiwiY2FwYWJpbGl0aWVzIjoiWydyZWFkJ10iLCJpYXQiOjE1MTYyMzkwMjJ9.WXYvIKLdPz_Mm0XDYSOJo298ftuBqqjTzbRvCpxa9Go'
   },
-  0: {
-    password: '0',
+  2: {
+    password: '2',
     name: 'Administrator',
     token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQWRtaW5pc3RyYXRvciIsInJvbGUiOiJhZG1pbiIsImNhcGFiaWxpdGllcyI6IlsnY3JlYXRlJywncmVhZCcsJ3VwZGF0ZScsJ2RlbGV0ZSddIiwiaWF0IjoxNTE2MjM5MDIyfQ.pAZXAlTmC8fPELk2xHEaP1mUhR8egg9TH5rCyqZhZkQ'
   },
@@ -44,9 +45,25 @@ function AuthProvider(props) {
   const [error, setError] = useState(null);
   const [capabilities, setCapabilities] = useState(null);
 
-  const login = (username, password) => {
+  const login = async (username, password) => {
     // find the user from above and see who matches
+
+    // Basic Auth
+    // base64 encoded username:password
+    let encondedCredentials = btoa(`${username}:${password}`);
+
+    // send the encoded credentials to the /signin route as a basic auth header
+    let response = await axios.post('/signin').set({ Authorization: `Basic ${encondedCredentials}` });
+
+    // token comes back in the response
+    if (response.data) {
+      validateToken(response.data.token);
+
+    }
+
+
     let user = testUsers[username];
+
     if (user && user.password === password) {
       let tokenPayload = jwtDecode(user.token);
       // console.log('logged in successfully! payload: ', tokenPayload);
@@ -62,6 +79,17 @@ function AuthProvider(props) {
   const logout = () => {
     setUser(null);
     setIsLoggedIn(false);
+  }
+
+  const validateToken = (token) => {
+    try {
+      let validUser = jwtDecode(token);
+      setLoginState(true, token, validUser);
+    }
+    catch (e) {
+      setLoginState(false, null, {capabilities: []}, e);
+      console.log('Token Validation Error', e);
+    }
   }
 
   return (
