@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
 import axios from 'axios';
 
+const SERVER_URL = import.meta.env.SERVER_URL || 'http://localhost:3001';
+
 const testUsers = {
   Administrator: {
     password: 'admin',
@@ -44,26 +46,44 @@ function AuthProvider(props) {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [capabilities, setCapabilities] = useState(null);
+  const [token, setToken] = React.useState(null);
 
   const login = async (username, password) => {
+
+    // console.log('login function called', username, password);
     // find the user from above and see who matches
 
     // Basic Auth
     // base64 encoded username:password
     let encondedCredentials = btoa(`${username}:${password}`);
-
+    // console.log('encoded credentials', encondedCredentials);
     // send the encoded credentials to the /signin route as a basic auth header
-    let response = await axios.post('/signin').set({ Authorization: `Basic ${encondedCredentials}` });
+    try {
+      // console.log('sending credentials to /signin route', encondedCredentials);
+      const axiosConfig = { 
+        method: 'post',
+        url: `${SERVER_URL}/signin`,
+        headers: {
+          Authorization: `Basic: ${encondedCredentials}` 
+        }
+      };
+      console.log('axiosConfig:', axiosConfig);
+      let response = await axios(axiosConfig);
 
-    // token comes back in the response
-    if (response.data) {
-      validateToken(response.data.token);
+      console.log('response from /signin route', response);
+      // token comes back in the response
+      if (response.data) {
+        validateToken(response.data.token);
+      }
 
+    } catch (e) {
+      console.log('uh oh', e)
+      setLoginState(false, token, username, e)
     }
 
+    // let user = testUsers[username];
 
-    let user = testUsers[username];
-
+    console.log('user, user.password, password', user, user.password, password)
     if (user && user.password === password) {
       let tokenPayload = jwtDecode(user.token);
       // console.log('logged in successfully! payload: ', tokenPayload);
@@ -90,6 +110,15 @@ function AuthProvider(props) {
       setLoginState(false, null, {capabilities: []}, e);
       console.log('Token Validation Error', e);
     }
+  }
+
+  const setLoginState = (loggedIn, token, user, error) => {
+    // cookie.save('auth', token);
+    // this.setState({ token, loggedIn, user, error: error || null });
+    setToken(token);
+    setIsLoggedIn(loggedIn);
+    setUser(user);
+    setError(error || null);
   }
 
   return (

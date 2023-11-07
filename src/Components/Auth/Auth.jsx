@@ -5,6 +5,8 @@ function Auth({ capability, children }) {
 
   const { capabilities, isLoggedIn } = useContext(AuthContext);
 
+  console.log('capabilities:', capabilities, 'isLoggedIn:', isLoggedIn, 'capability:', capability);
+
   return (
     <>
       {isLoggedIn && capabilities.includes(capability)

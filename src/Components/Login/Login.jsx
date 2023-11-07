@@ -11,6 +11,7 @@ function Login() {
     e.preventDefault();
     let username = e.target.username.value;
     let password = e.target.password.value;
+    // console.log('username:', username, 'password:', password)
     auth.login(username, password);
   }
 

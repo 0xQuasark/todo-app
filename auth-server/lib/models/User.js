@@ -24,7 +24,7 @@ const userModel = (sequelize, DataTypes) => {
     token: {
       type: DataTypes.VIRTUAL,
       get() {
-        // this funciton runs whenever I refer to this property on thce record
+        // this funciton runs whenever I refer to this property on the record
         return jwt.sign({ username: this.username, capabilities: this.capabilities }, SECRET); // function for creating our claim.
       }
     },
@@ -44,21 +44,28 @@ const userModel = (sequelize, DataTypes) => {
 
   // hook: something that occurs automagically -> when an event.
   userTable.beforeCreate(async (user) => {
+    // console.log('We\'re here! user & pass: ', user, user.password);
     // encrypt the password
     user.password = await bcrypt.hash(user.password, 10);
   });
   
   userTable.authenticateBasic = async function (username, password) {
-    let userRecord = await this.findOne({ where: { username }}); // valuse are pulled from DB
-    let valid = await bcrypt.compare(password, userRecord.password);
-    if (valid) {
-      return userRecord;
-    } else {
+    console.log('u&p are: ', username, password);
+    try {
+      let userRecord = await this.findOne({ where: { username }}); // valuse are pulled from DB
+      // console.log('userRecord: ', userRecord);
+      let valid = await bcrypt.compare(password, userRecord.password);
+      if (valid) {
+        return userRecord;
+      }
+    } catch (e) {
+      console.error('Error occurred: ', e);
       throw new Error('Invalid credentials');
     }
   }
 
   userTable.authenticateToken = async function (token) {
+    console.log('HOW AM I BEING CALLED? token is: ', token);
     let parsedToken = jwt.verify(token, SECRET); // returns the payload data
     const validUser = this.findOne({ where: { username: parsedToken.username }});
     if (validUser) {

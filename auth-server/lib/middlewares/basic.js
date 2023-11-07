@@ -5,7 +5,7 @@ const { UserModel } = require('../models');
 
 async function basicAuth(req, res, next) {
   // does the request contain auth headers?
-  console.log(req.headers.authorization);
+  // console.log(req.headers.authorization);
   if (!req.headers.authorization) {
     next('Invalid login');
     return;
@@ -14,6 +14,7 @@ async function basicAuth(req, res, next) {
   let encodedString = req.headers.authorization.split(' ')[1];
   let decodedString = base64.decode(encodedString);
   let [username, password] = decodedString.split(':');
+  // console.log('username, password: ', username, password);
   let validUser = await UserModel.authenticateBasic(username, password);
   if (validUser) {
     req.user = validUser;

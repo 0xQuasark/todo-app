@@ -7,7 +7,7 @@ const { UserModel } = require('../models');
 
 router.post('/signup', async (req, res) => {
   try {
-    console.log(req.body);
+    console.log(req.body); // reads from the body of the request (Form-encoded data, username:username, password:password)
     let newUser = await UserModel.create(req.body);
     res.status(201).json(newUser);
   } catch (e) {
